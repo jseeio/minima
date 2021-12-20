@@ -9,11 +9,58 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
+
+        <!-- Container for a JSEE app -->
+        <div id="port-container"></div>
+
         {{ content }}
       </div>
     </main>
 
     {%- include footer.html -%}
+
+    {%- if site.port_runtime or page.port_runtime -%}
+      {%- assign port_script = "port.runtime.js" -%}
+    {%- else -%}
+      {%- assign port_script = "port.js" -%}
+    {%- endif -%}
+
+    {%- if site.port_container or page.port_container -%}
+      {%- if site.port_container -%}
+        {%- assign port_container = site.port_container -%}
+      {%- else -%}
+        {%- assign port_container = page.port_container -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- assign port_container = "port-container" -%}
+    {%- endif -%}
+
+    {% if site.port_version or page.port_version %}
+      {% if site.port_version %}
+        <script src="https://cdn.jsdelivr.net/npm/@statsim/port@{{ site.port_version }}/dist/{{ port_script }}"></script>
+      {%- else -%}
+        <script src="https://cdn.jsdelivr.net/npm/@statsim/port@{{ page.port_version }}/dist/{{ port_script }}"></script>
+      {%- endif -%}
+    {%- else -%}
+      <script src="https://cdn.jsdelivr.net/npm/@statsim/port/dist/{{ port_script }}"></script>
+    {%- endif %}
+
+    {% if site.port_schema or page.port_schema %}
+      {%- if site.port_schema -%}
+        {%- assign port_schema = site.port_schema -%}
+      {%- else -%}
+        {%- assign port_schema = page.port_schema -%}
+      {%- endif -%}
+
+      <script>
+        const schema = {{ port_schema | jsonify }}
+        console.log('[JSEE] Init Port with schema:', schema)
+        var port = new Port({
+          portContainer: document.getElementById('port-container'),
+          schema: {{ schema }}
+        })
+      </script>
+    {%- endif %}
 
   </body>
 
