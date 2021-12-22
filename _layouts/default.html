@@ -11,7 +11,7 @@
       <div class="wrapper">
 
         <!-- Container for a JSEE app -->
-        <div id="port-container"></div>
+        <div id="jsee-container"></div>
 
         {{ content }}
       </div>
@@ -19,44 +19,44 @@
 
     {%- include footer.html -%}
 
-    {%- if site.port_runtime or page.port_runtime -%}
-      {%- assign port_script = "port.runtime.js" -%}
+    {%- if site.jsee_runtime or page.jsee_runtime -%}
+      {%- assign jsee_script = "jsee.runtime.js" -%}
     {%- else -%}
-      {%- assign port_script = "port.js" -%}
+      {%- assign jsee_script = "jsee.js" -%}
     {%- endif -%}
 
-    {%- if site.port_container or page.port_container -%}
-      {%- if site.port_container -%}
-        {%- assign port_container = site.port_container -%}
+    {%- if site.jsee_container or page.jsee_container -%}
+      {%- if site.jsee_container -%}
+        {%- assign jsee_container = site.jsee_container -%}
       {%- else -%}
-        {%- assign port_container = page.port_container -%}
+        {%- assign jsee_container = page.jsee_container -%}
       {%- endif -%}
     {%- else -%}
-      {%- assign port_container = "port-container" -%}
+      {%- assign jsee_container = "jsee-container" -%}
     {%- endif -%}
 
-    {% if site.port_version or page.port_version %}
-      {% if site.port_version %}
-        <script src="https://cdn.jsdelivr.net/npm/@statsim/port@{{ site.port_version }}/dist/{{ port_script }}"></script>
+    {% if site.jsee_version or page.jsee_version %}
+      {% if site.jsee_version %}
+        <script src="https://cdn.jsdelivr.net/npm/@jseeio/jsee@{{ site.jsee_version }}/dist/{{ jsee_script }}"></script>
       {%- else -%}
-        <script src="https://cdn.jsdelivr.net/npm/@statsim/port@{{ page.port_version }}/dist/{{ port_script }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jseeio/jsee@{{ page.jsee_version }}/dist/{{ jsee_script }}"></script>
       {%- endif -%}
     {%- else -%}
-      <script src="https://cdn.jsdelivr.net/npm/@statsim/port/dist/{{ port_script }}"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jseeio/jsee/dist/{{ jsee_script }}"></script>
     {%- endif %}
 
-    {% if site.port_schema or page.port_schema %}
-      {%- if site.port_schema -%}
-        {%- assign port_schema = site.port_schema -%}
+    {% if site.jsee_schema or page.jsee_schema %}
+      {%- if site.jsee_schema -%}
+        {%- assign jsee_schema = site.jsee_schema -%}
       {%- else -%}
-        {%- assign port_schema = page.port_schema -%}
+        {%- assign jsee_schema = page.jsee_schema -%}
       {%- endif -%}
 
       <script>
-        const schema = {{ port_schema | jsonify }}
-        console.log('[JSEE] Init Port with schema:', schema)
-        var port = new Port({
-          portContainer: document.getElementById('port-container'),
+        const schema = {{ jsee_schema | jsonify }}
+        console.log('[Minima] Schema:', schema)
+        var env = new JSEE({
+          container: document.getElementById('jsee-container'),
           schema
         })
       </script>
