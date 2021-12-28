@@ -37,12 +37,12 @@
 
     {% if site.jsee_version or page.jsee_version %}
       {% if site.jsee_version %}
-        <script src="https://cdn.jsdelivr.net/npm/@jseeio/jsee@{{ site.jsee_version }}/dist/{{ jsee_script }}"></script>
+        {%- assign jsee_version = site.jsee_version -%}
       {%- else -%}
-        <script src="https://cdn.jsdelivr.net/npm/@jseeio/jsee@{{ page.jsee_version }}/dist/{{ jsee_script }}"></script>
+        {%- assign jsee_version = page.jsee_version -%}
       {%- endif -%}
     {%- else -%}
-      <script src="https://cdn.jsdelivr.net/npm/@jseeio/jsee/dist/{{ jsee_script }}"></script>
+      {%- assign jsee_version = "latest" -%}
     {%- endif %}
 
     {% if site.jsee_schema or page.jsee_schema %}
@@ -51,6 +51,9 @@
       {%- else -%}
         {%- assign jsee_schema = page.jsee_schema -%}
       {%- endif -%}
+
+      <script src="https://cdn.jsdelivr.net/npm/@jseeio/jsee@{{ jsee_version }}/dist/{{ jsee_script }}"></script>
+      <script>window.JSEE || document.write('<script src="https://unpkg.com/@jseeio/jsee@{{ jsee_version }}/dist/{{ jsee_script }}">\x3C/script>')</script>
 
       <script>
         const schema = {{ jsee_schema | jsonify }}
