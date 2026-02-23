@@ -12,35 +12,83 @@
     return
   }
 
+  // Build nested structure: h2 items with collapsible h3 sub-lists
   var ul = document.createElement('ul')
+  var currentH2Li = null
+  var currentSubUl = null
+
   for (var i = 0; i < headings.length; i++) {
     var h = headings[i]
     if (!h.id) {
       h.id = h.textContent.trim().toLowerCase()
         .replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
     }
-    var li = document.createElement('li')
-    if (h.tagName === 'H3') li.classList.add('toc-h3')
+
     var a = document.createElement('a')
     a.href = '#' + h.id
     a.textContent = h.textContent
-    li.appendChild(a)
-    ul.appendChild(li)
+
+    if (h.tagName === 'H2') {
+      var li = document.createElement('li')
+      li.appendChild(a)
+      ul.appendChild(li)
+      currentH2Li = li
+      currentSubUl = null
+    } else {
+      if (!currentSubUl) {
+        currentSubUl = document.createElement('ul')
+        currentSubUl.classList.add('toc-sub')
+        if (currentH2Li) {
+          currentH2Li.appendChild(currentSubUl)
+        } else {
+          // H3 before any H2: treat as top-level
+          var li = document.createElement('li')
+          li.classList.add('toc-h3')
+          li.appendChild(a)
+          ul.appendChild(li)
+          continue
+        }
+      }
+      var li = document.createElement('li')
+      li.classList.add('toc-h3')
+      li.appendChild(a)
+      currentSubUl.appendChild(li)
+    }
   }
   sidebar.appendChild(ul)
 
-  // Highlight active heading on scroll
   var links = ul.querySelectorAll('a')
   var headingList = Array.prototype.slice.call(headings)
+  var subLists = ul.querySelectorAll('.toc-sub')
 
   function updateActive() {
     var scrollY = window.scrollY + 80
-    var active = null
+    var activeIdx = null
     for (var i = 0; i < headingList.length; i++) {
-      if (headingList[i].offsetTop <= scrollY) active = i
+      if (headingList[i].offsetTop <= scrollY) activeIdx = i
     }
+
+    var activeId = activeIdx !== null ? headingList[activeIdx].id : null
+
+    // Walk back to find the parent h2 of the active heading
+    var activeH2Id = null
+    if (activeIdx !== null) {
+      for (var i = activeIdx; i >= 0; i--) {
+        if (headingList[i].tagName === 'H2') {
+          activeH2Id = headingList[i].id
+          break
+        }
+      }
+    }
+
     for (var i = 0; i < links.length; i++) {
-      links[i].classList.toggle('toc-active', i === active)
+      links[i].classList.toggle('toc-active', links[i].getAttribute('href') === '#' + activeId)
+    }
+
+    for (var i = 0; i < subLists.length; i++) {
+      var parentLink = subLists[i].parentNode.querySelector('a')
+      var parentId = parentLink ? parentLink.getAttribute('href').slice(1) : null
+      subLists[i].classList.toggle('toc-expanded', parentId === activeH2Id)
     }
   }
 
