@@ -93,6 +93,55 @@ pre, code {
   .highlighter-rouge & { background: var(--color-code-bg); }
 }
 
+/**
+ * Syntax highlighting — dark mode overrides
+ * Muted palette readable on #212121 background.
+ */
+@mixin dark-syntax {
+  .highlight {
+    .c, .cm, .c1, .cs  { color: #6a737d; }  // comments
+    .cp                 { color: #6a737d; font-weight: bold; }
+    .err                { color: #f97583; background-color: transparent; }
+    .k, .kc, .kd, .kp, .kr, .kn { color: #f97583; font-weight: normal; }
+    .kt                { color: #79b8ff; font-weight: normal; }
+    .o, .ow            { color: #f97583; font-weight: normal; }
+    .m, .mf, .mh, .mi, .mo, .il { color: #79b8ff; }  // numbers
+    .s, .sb, .sc, .sd, .s2, .se, .sh, .si, .sx, .s1 { color: #9ecbff; }  // strings
+    .sr                { color: #dbedff; }
+    .ss                { color: #b392f0; }
+    .na                { color: #b392f0; }  // attributes
+    .nb                { color: #79b8ff; }
+    .nc                { color: #b392f0; font-weight: normal; }
+    .no                { color: #79b8ff; }
+    .ni                { color: #b392f0; }
+    .ne, .nf           { color: #b392f0; font-weight: normal; }
+    .nn                { color: #b392f0; }
+    .nt                { color: #85e89d; }  // tags
+    .nv, .vc, .vg, .vi { color: #79b8ff; }  // variables
+    .bp                { color: #6a737d; }
+    .w                 { color: #6a737d; }
+    .gd                { color: #f97583; background-color: rgba(203,36,49,0.15); }
+    .gi                { color: #85e89d; background-color: rgba(52,208,88,0.15); }
+    .gd .x             { background-color: rgba(203,36,49,0.25); }
+    .gi .x             { background-color: rgba(52,208,88,0.25); }
+    .gh                { color: #79b8ff; }
+    .gu                { color: #6a737d; }
+    .go                { color: #6a737d; }
+    .gp                { color: #6a737d; }
+    .gr, .gt           { color: #f97583; }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark-syntax;
+  }
+}
+
+[data-theme="dark"] {
+  @include dark-syntax;
+}
+
 table {
   color: var(--color-table-text);
   tr { &:nth-child(even) { background-color: var(--color-table-zebra); } }
@@ -149,8 +198,13 @@ table {
 }
 
 /**
- * Logos
+ * Logos — invert black SVG logos in dark mode
  */
+.logo_header img,
+.logo_footer img {
+  transition: filter 0.15s, opacity 0.15s;
+}
+
 .logo_footer {
   margin-left: -3px;
   img {
@@ -158,6 +212,22 @@ table {
   }
   &:hover img {
     opacity: 1
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    .logo_header img,
+    .logo_footer img {
+      filter: invert(1);
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .logo_header img,
+  .logo_footer img {
+    filter: invert(1);
   }
 }
 
@@ -240,7 +310,7 @@ table {
     font-size: 13px;
     line-height: 1.4;
 
-    ul {
+    > ul {
       list-style: none;
       margin: 0;
       padding: 0;
@@ -249,6 +319,20 @@ table {
 
     li {
       margin: 0;
+    }
+
+    .toc-sub {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+
+      &.toc-expanded {
+        max-height: 500px;
+      }
     }
 
     .toc-h3 {
