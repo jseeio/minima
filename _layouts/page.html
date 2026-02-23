@@ -5,7 +5,9 @@ layout: default
 
   <header class="post-header">
     {%- include page-actions.html -%}
+    {%- unless page.show_title == false -%}
     <h1 class="post-title">{{ page.title | escape }}</h1>
+    {%- endunless -%}
   </header>
 
   <div class="post-content">
