@@ -19,6 +19,38 @@
 
     {%- include footer.html -%}
 
+    <script>
+    function getEffectiveTheme() {
+      var manual = document.documentElement.getAttribute('data-theme')
+      if (manual) return manual
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+
+    function applyThemeIcons() {
+      var theme = getEffectiveTheme()
+      var darkIcons = document.querySelectorAll('.theme-icon-dark')
+      var lightIcons = document.querySelectorAll('.theme-icon-light')
+      for (var i = 0; i < darkIcons.length; i++) {
+        darkIcons[i].style.display = theme === 'light' ? 'block' : 'none'
+      }
+      for (var i = 0; i < lightIcons.length; i++) {
+        lightIcons[i].style.display = theme === 'dark' ? 'block' : 'none'
+      }
+    }
+
+    function toggleTheme() {
+      var current = getEffectiveTheme()
+      var next = current === 'dark' ? 'light' : 'dark'
+      document.documentElement.setAttribute('data-theme', next)
+      applyThemeIcons()
+    }
+
+    applyThemeIcons()
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      if (!document.documentElement.getAttribute('data-theme')) applyThemeIcons()
+    })
+    </script>
+
     {%- if site.jsee_runtime or page.jsee_runtime -%}
       {%- assign jsee_script = "jsee.runtime.js" -%}
     {%- else -%}

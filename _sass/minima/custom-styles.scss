@@ -2,6 +2,146 @@
 // (Use `_sass/minima/custom-variables.scss` to override variable defaults)
 
 /**
+ * Theme switching via CSS custom properties
+ * Light values from classic skin, dark values from dark skin.
+ * System preference detected via prefers-color-scheme.
+ * Manual override via [data-theme] attribute on <html>.
+ */
+:root {
+  --color-bg: #fdfdfd;
+  --color-text: #111111;
+  --color-brand: #828282;
+  --color-brand-light: #e8e8e8;
+  --color-brand-dark: #424242;
+  --color-link: #2a7ae2;
+  --color-link-visited: #1756a9;
+  --color-border: #e8e8e8;
+  --color-border-hover: #c9c9c9;
+  --color-border-dark: #424242;
+  --color-code-bg: #eeeeff;
+  --color-table-text: #3b3b3b;
+  --color-table-zebra: #f7f7f7;
+  --color-table-header-bg: #f0f0f0;
+  --color-table-header-border: #dedede;
+  --color-site-title: #424242;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #181818;
+    --color-text: #bbbbbb;
+    --color-brand: #999999;
+    --color-brand-light: #a6a6a6;
+    --color-brand-dark: #424242;
+    --color-link: #79b8ff;
+    --color-link-visited: #79b8ff;
+    --color-border: #424242;
+    --color-border-hover: #a6a6a6;
+    --color-border-dark: #999999;
+    --color-code-bg: #212121;
+    --color-table-text: #bbbbbb;
+    --color-table-zebra: #1f1f1f;
+    --color-table-header-bg: #2a2a2a;
+    --color-table-header-border: #3b3b3b;
+    --color-site-title: #a6a6a6;
+  }
+}
+
+[data-theme="dark"] {
+  --color-bg: #181818;
+  --color-text: #bbbbbb;
+  --color-brand: #999999;
+  --color-brand-light: #a6a6a6;
+  --color-brand-dark: #424242;
+  --color-link: #79b8ff;
+  --color-link-visited: #79b8ff;
+  --color-border: #424242;
+  --color-border-hover: #a6a6a6;
+  --color-border-dark: #999999;
+  --color-code-bg: #212121;
+  --color-table-text: #bbbbbb;
+  --color-table-zebra: #1f1f1f;
+  --color-table-header-bg: #2a2a2a;
+  --color-table-header-border: #3b3b3b;
+  --color-site-title: #a6a6a6;
+}
+
+// Override base element styles with CSS custom properties
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+a {
+  color: var(--color-link);
+  &:visited { color: var(--color-link-visited); }
+  &:hover { color: var(--color-text); }
+}
+
+blockquote {
+  color: var(--color-brand);
+  border-left-color: var(--color-border);
+}
+
+pre, code {
+  border-color: var(--color-border);
+  background-color: var(--color-code-bg);
+}
+
+.highlight {
+  background: var(--color-code-bg);
+  .highlighter-rouge & { background: var(--color-code-bg); }
+}
+
+table {
+  color: var(--color-table-text);
+  tr { &:nth-child(even) { background-color: var(--color-table-zebra); } }
+  th {
+    background-color: var(--color-table-header-bg);
+    border: 1px solid var(--color-table-header-border);
+  }
+  td { border: 1px solid var(--color-border); }
+}
+
+// Override layout styles
+.site-header {
+  border-bottom-color: var(--color-border);
+}
+
+.site-title, .site-title:visited {
+  color: var(--color-site-title);
+}
+
+.site-nav {
+  background-color: var(--color-bg);
+  border-color: var(--color-border);
+
+  .menu-icon > svg path { fill: var(--color-border-dark); }
+  .page-link { color: var(--color-text); }
+}
+
+.site-footer {
+  border-top-color: var(--color-border);
+}
+
+.footer-col-wrapper, .social-links {
+  color: var(--color-brand);
+}
+
+.post-meta {
+  color: var(--color-brand);
+}
+
+.social-media-list li a {
+  border-color: var(--color-border);
+  &:hover { border-color: var(--color-border-hover); }
+}
+
+.pagination li div.pager-edge {
+  color: var(--color-border);
+}
+
+/**
  * Port container
  */
 #jsee-container {
@@ -21,6 +161,120 @@
   }
 }
 
+/**
+ * Page actions (copy / save / theme toggle)
+ */
+.post-header {
+  position: relative;
+}
+
+.page-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 4px;
+}
+
+.page-action-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--color-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+
+  &.page-action-ok {
+    color: #2a9d2a;
+  }
+}
+
+/**
+ * Theme toggle in header
+ */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-brand);
+  padding: 0;
+  margin-left: 12px;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--color-text);
+  }
+
+  .theme-icon-light,
+  .theme-icon-dark {
+    display: none; // JS controls visibility
+  }
+}
+
+/**
+ * Table of contents sidebar (desktop only)
+ */
+.toc-sidebar {
+  display: none;
+
+  @media screen and (min-width: 1200px) {
+    display: block;
+    position: fixed;
+    top: 80px;
+    right: calc((100vw - 770px) / 2 - 220px);
+    width: 200px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.4;
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: 2px solid var(--color-border);
+    }
+
+    li {
+      margin: 0;
+    }
+
+    .toc-h3 {
+      padding-left: 12px;
+    }
+
+    a {
+      display: block;
+      padding: 3px 0 3px 12px;
+      color: var(--color-brand);
+      text-decoration: none;
+      transition: color 0.15s;
+
+      &:hover {
+        color: var(--color-text);
+      }
+
+      &.toc-active {
+        color: var(--color-text);
+        border-left: 2px solid var(--color-link);
+        margin-left: -2px;
+      }
+    }
+  }
+}
+
 .social-links {
   display: flex;
   justify-content: right;
@@ -29,4 +283,3 @@
     margin: 0
   }
 }
-
