@@ -4,6 +4,7 @@ layout: default
 <article class="post">
 
   <header class="post-header">
+    {%- include page-actions.html -%}
     <h1 class="post-title">{{ page.title | escape }}</h1>
   </header>
 
@@ -11,4 +12,5 @@ layout: default
     {{ content }}
   </div>
 
+  {%- include toc.html -%}
 </article>
