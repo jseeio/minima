@@ -1,0 +1,52 @@
+<div class="page-actions" data-source-path="{{ page.path }}">
+  <button class="page-action-btn" onclick="copyPageContent(this)" title="Copy content">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5.5" y="5.5" width="9" height="9" rx="1"/>
+      <path d="M10.5 5.5V2.5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h3"/>
+    </svg>
+  </button>
+  <button class="page-action-btn" onclick="saveAsMarkdown()" title="Save as Markdown">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 2v9m0 0l-3-3m3 3l3-3"/>
+      <path d="M2 12v1.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V12"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+function copyPageContent(btn) {
+  var el = document.querySelector('.post-content') || document.querySelector('.e-content')
+  if (!el) return
+  var text = el.innerText
+  navigator.clipboard.writeText(text).then(function() {
+    btn.classList.add('page-action-ok')
+    setTimeout(function() { btn.classList.remove('page-action-ok') }, 1500)
+  })
+}
+
+function saveAsMarkdown() {
+  var actions = document.querySelector('.page-actions')
+  var sourcePath = actions && actions.dataset.sourcePath
+  if (!sourcePath) return
+
+  var filename = sourcePath.split('/').pop()
+
+  fetch('/' + sourcePath).then(function(r) {
+    if (!r.ok) throw new Error(r.status)
+    return r.text()
+  }).then(function(text) {
+    download(filename, text)
+  }).catch(function() {
+    var el = document.querySelector('.post-content') || document.querySelector('.e-content')
+    if (el) download(filename, el.innerText)
+  })
+}
+
+function download(filename, text) {
+  var a = document.createElement('a')
+  a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown' }))
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(a.href)
+}
+</script>
